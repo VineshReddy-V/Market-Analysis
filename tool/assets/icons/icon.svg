@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- Main background gradient: electric blue to cyan -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" />
+    </linearGradient>
+    <!-- Lightning bolt subtle inner glow -->
+    <linearGradient id="boltGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0F2FE;stop-opacity:0.9" />
+    </linearGradient>
+    <!-- Soft shadow filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1E1B4B" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="4" y="4" width="120" height="120" rx="28" ry="28" fill="url(#bgGrad)" filter="url(#shadow)"/>
+
+  <!-- Subtle inner highlight for depth -->
+  <rect x="6" y="6" width="116" height="58" rx="26" ry="26" fill="white" opacity="0.12"/>
+
+  <!-- Lightning bolt icon - bold & recognizable at small sizes -->
+  <polygon
+    points="72,16 42,68 58,68 48,112 88,56 68,56 80,16"
+    fill="url(#boltGrad)"
+    stroke="white"
+    stroke-width="1.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Small pulse/signal arcs on the right side -->
+  <path d="M 90,48 Q 98,64 90,80" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M 98,40 Q 110,64 98,88" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+</svg>
