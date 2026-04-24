@@ -3,7 +3,7 @@ const { detectSwingHighLow } = require('./detectSwingHighLow');
 const { calculateFibonacciLevels } = require('./calculateFibonacciLevels');
 
 /**
- * Gemini function declarations — defines the tools the LLM can call.
+ * Tool declarations — defines the tools the LLM can call.
  */
 const toolDeclarations = [
   {
@@ -84,6 +84,18 @@ const toolDeclarations = [
 ];
 
 /**
+ * OpenAI-formatted tool definitions for chat completions API.
+ */
+const openaiTools = toolDeclarations.map((decl) => ({
+  type: 'function',
+  function: {
+    name: decl.name,
+    description: decl.description,
+    parameters: decl.parameters,
+  },
+}));
+
+/**
  * Map of tool names to their implementation functions.
  */
 const toolFunctions = {
@@ -92,4 +104,4 @@ const toolFunctions = {
   calculateFibonacciLevels,
 };
 
-module.exports = { toolDeclarations, toolFunctions };
+module.exports = { toolDeclarations, openaiTools, toolFunctions };

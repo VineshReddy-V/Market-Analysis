@@ -1,10 +1,10 @@
-const { createAgentChat } = require('./gemini');
+const { chatCompletion, SYSTEM_PROMPT } = require('./openai');
 const { toolFunctions } = require('./tools');
 
 const MAX_STEPS = 10;
 
 /**
- * Run the multi-step agent loop: send user query to Gemini, execute tool calls,
+ * Run the multi-step agent loop: send user query to OpenAI, execute tool calls,
  * feed results back, and repeat until the LLM produces a final text answer.
  * Returns the full execution trace, chart-ready data, and a summary.
  */
@@ -13,7 +13,10 @@ async function runAgentLoop(userQuery) {
   let chartData = null;
   let step = 0;
 
-  const chat = createAgentChat();
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user', content: userQuery },
+  ];
 
   step++;
   trace.push({
@@ -22,20 +25,23 @@ async function runAgentLoop(userQuery) {
     summary: `User query: "${userQuery}"`,
   });
 
-  let result;
+  let completion;
   try {
-    result = await chat.sendMessage(userQuery);
+    completion = await chatCompletion(messages);
   } catch (err) {
-    trace.push({ step: ++step, type: 'error', summary: `Gemini API error: ${err.message}` });
+    trace.push({ step: ++step, type: 'error', summary: `OpenAI API error: ${err.message}` });
     return { trace, chartData: null, summary: 'Failed to communicate with the AI model.' };
   }
 
   while (step < MAX_STEPS) {
-    const response = result.response;
-    const functionCalls = response.functionCalls();
+    const choice = completion.choices[0];
+    const message = choice.message;
+    messages.push(message);
 
-    if (!functionCalls || functionCalls.length === 0) {
-      const finalText = response.text();
+    const toolCalls = message.tool_calls;
+
+    if (!toolCalls || toolCalls.length === 0) {
+      const finalText = message.content || '';
       step++;
       trace.push({
         step,
@@ -47,26 +53,27 @@ async function runAgentLoop(userQuery) {
       return { trace, chartData, summary: finalText };
     }
 
-    const functionResponses = [];
+    for (const toolCall of toolCalls) {
+      const fnName = toolCall.function.name;
+      const fnArgs = JSON.parse(toolCall.function.arguments);
 
-    for (const call of functionCalls) {
       step++;
       trace.push({
         step,
         type: 'llm_decision',
-        summary: `Agent decided to call tool: ${call.name}`,
-        toolName: call.name,
-        toolInput: summarizeInput(call.args),
+        summary: `Agent decided to call tool: ${fnName}`,
+        toolName: fnName,
+        toolInput: summarizeInput(fnArgs),
       });
 
-      const toolFn = toolFunctions[call.name];
+      const toolFn = toolFunctions[fnName];
       let toolResult;
 
       if (!toolFn) {
-        toolResult = { success: false, error: `Unknown tool: ${call.name}` };
+        toolResult = { success: false, error: `Unknown tool: ${fnName}` };
       } else {
         try {
-          toolResult = await toolFn(call.args);
+          toolResult = await toolFn(fnArgs);
         } catch (err) {
           toolResult = { success: false, error: `Tool execution error: ${err.message}` };
         }
@@ -76,23 +83,22 @@ async function runAgentLoop(userQuery) {
       trace.push({
         step,
         type: 'tool_result',
-        toolName: call.name,
-        summary: summarizeToolResult(call.name, toolResult),
+        toolName: fnName,
+        summary: summarizeToolResult(fnName, toolResult),
         data: toolResult,
       });
 
-      functionResponses.push({
-        functionResponse: {
-          name: call.name,
-          response: toolResult,
-        },
+      messages.push({
+        role: 'tool',
+        tool_call_id: toolCall.id,
+        content: JSON.stringify(toolResult),
       });
     }
 
     try {
-      result = await chat.sendMessage(functionResponses);
+      completion = await chatCompletion(messages);
     } catch (err) {
-      trace.push({ step: ++step, type: 'error', summary: `Gemini API error: ${err.message}` });
+      trace.push({ step: ++step, type: 'error', summary: `OpenAI API error: ${err.message}` });
       chartData = buildChartData(trace);
       return { trace, chartData, summary: 'Agent loop interrupted by an API error.' };
     }

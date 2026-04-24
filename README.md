@@ -1,6 +1,6 @@
 # Market Agent — Agentic AI Chrome Extension
 
-A lightweight Chrome extension that demonstrates **agentic AI behavior** for market-data visualization. The extension accepts natural-language requests, uses **Gemini** to orchestrate a multi-step tool-calling loop, and renders a candlestick chart with technical overlays.
+A lightweight Chrome extension that demonstrates **agentic AI behavior** for market-data visualization. The extension accepts natural-language requests, uses **OpenAI** to orchestrate a multi-step tool-calling loop, and renders a candlestick chart with technical overlays.
 
 > **Disclaimer:** This is an academic demo of a tool-using LLM agent. It is **not** a trading bot and does **not** provide financial advice.
 
@@ -15,7 +15,7 @@ User ──► Chrome Extension (popup)
               ▼
          Node.js + Express Server
               │
-              ├─ Gemini 2.0 Flash (function calling)
+              ├─ OpenAI Chat Completions (function calling)
               │       ▲  ▼
               │   tool calls / results
               │
@@ -26,7 +26,7 @@ User ──► Chrome Extension (popup)
 
 - **Extension** — Manifest V3 popup with query input, agent trace panel, and Canvas-based chart.
 - **Backend** — Lightweight Express server that hosts the agent loop and keeps the API key secure.
-- **Gemini native function calling** — conversation history is automatically preserved across turns so every LLM call sees all prior context.
+- **OpenAI function calling** — conversation history is manually managed across turns so every LLM call sees all prior context.
 
 ---
 
@@ -44,7 +44,7 @@ User ──► Chrome Extension (popup)
 
 ### Prerequisites
 - **Node.js** v18+
-- **Google Gemini API key** — get one free at https://aistudio.google.com/app/apikey
+- **OpenAI API key** — get one at https://platform.openai.com/api-keys
 - **Chrome** or **Edge** browser
 
 ### 1. Backend
@@ -55,7 +55,7 @@ npm install
 
 # Create .env from the example
 cp .env.example .env
-# Edit .env and paste your Gemini API key
+# Edit .env and paste your OpenAI API key
 ```
 
 Start the server:
@@ -103,6 +103,26 @@ The server runs on `http://localhost:3000` by default.
 
 ---
 
+## Available OpenAI Models & Pricing
+
+You can choose any OpenAI model that supports **function calling** by setting `OPENAI_MODEL` in your `.env` file. Below are the recommended options (prices as of early 2025):
+
+| Model | Input (per 1M tokens) | Output (per 1M tokens) | Notes |
+|-------|----------------------|------------------------|-------|
+| **gpt-4o-mini** | $0.15 | $0.60 | **Default** — cheapest with function calling, great for demos |
+| **gpt-4o** | $2.50 | $10.00 | Higher quality reasoning, still fast |
+| **gpt-4-turbo** | $10.00 | $30.00 | Strong reasoning, larger context window |
+| **o3-mini** | $1.10 | $4.40 | Reasoning model, good for complex analysis |
+
+> **Tip:** The default is `gpt-4o-mini` — it costs ~17× less than `gpt-4o` while still handling multi-step tool calls reliably. Switch to a bigger model only if you need higher quality summaries.
+
+To change the model, edit `server/.env`:
+```
+OPENAI_MODEL=gpt-4o
+```
+
+---
+
 ## Project Structure
 
 ```
@@ -117,7 +137,7 @@ Market-Analysis/
 │   ├── package.json
 │   ├── .env.example
 │   ├── server.js        Express server
-│   ├── gemini.js        Gemini client setup
+│   ├── openai.js        OpenAI client setup
 │   ├── agent.js         Agent loop
 │   ├── tools/
 │   │   ├── index.js                    Tool registry + declarations
@@ -125,7 +145,7 @@ Market-Analysis/
 │   │   ├── detectSwingHighLow.js       Swing-point detection
 │   │   └── calculateFibonacciLevels.js Fibonacci math
 │   └── prompts/
-│       └── systemPrompt.js             Gemini system instruction
+│       └── systemPrompt.js             LLM system instruction
 ├── README.md
 ├── agentic_ai_chrome_plugin_spec.md
 └── coding_agent_prompt.md
@@ -137,11 +157,11 @@ Market-Analysis/
 
 | Requirement | How It's Met |
 |------------|--------------|
-| Multi-step agent loop | Gemini is called repeatedly; each tool result feeds back into the next LLM turn |
-| Full conversational memory | Gemini Chat API preserves the entire conversation history automatically |
+| Multi-step agent loop | OpenAI is called repeatedly; each tool result feeds back into the next LLM turn |
+| Full conversational memory | Conversation history array is passed with every request so the LLM sees all prior context |
 | Visible tool-use trace | Every step (decision, tool call, result, final answer) is rendered as a card in the UI |
 | At least 3 custom tools | fetchIntradayCandles, detectSwingHighLow, calculateFibonacciLevels |
-| Gemini Free API | Uses Gemini 2.0 Flash via `@google/generative-ai` |
+| OpenAI API | Uses configurable model (default `gpt-4o-mini`) via the `openai` SDK |
 | Chart output | Canvas-rendered candlestick chart with Fibonacci lines and swing markers |
 
 ---
