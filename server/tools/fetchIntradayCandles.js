@@ -1,4 +1,11 @@
-const yahooFinance = require('yahoo-finance2').default;
+let _yf;
+async function getYahooFinance() {
+  if (_yf) {
+    const mod = await import('yahoo-finance2');
+    return mod.default;
+  }
+  return _yf;
+}
 
 const SYMBOL_MAP = {
   'NIFTY': '^NSEI',
@@ -51,6 +58,7 @@ async function fetchIntradayCandles({ symbol, interval = '1m', lookbackDays = 1 
   period1.setDate(period1.getDate() - days);
 
   try {
+    const yahooFinance = await getYahooFinance();
     const result = await yahooFinance.chart(yahooSymbol, {
       period1,
       period2: now,
