@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Market Agent - Agentic AI Demo",
+  "version": "1.0.0",
+  "description": "An agentic AI Chrome extension that analyzes market data using Gemini-powered tool orchestration. Academic demo.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Market Agent"
+  },
+  "permissions": [],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ]
+}

@@ -1,0 +1,257 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 500px;
+  max-height: 600px;
+  overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f1923;
+  color: #e0e6ed;
+  font-size: 13px;
+}
+
+#app {
+  padding: 12px;
+}
+
+/* ---- Header ---- */
+header {
+  text-align: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1e2d3d;
+}
+
+header h1 {
+  font-size: 18px;
+  color: #4cc9f0;
+  font-weight: 600;
+}
+
+header .subtitle {
+  font-size: 11px;
+  color: #6b7b8d;
+  margin-top: 2px;
+}
+
+/* ---- Query Section ---- */
+#query-section {
+  margin-bottom: 12px;
+}
+
+#query-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #1e2d3d;
+  border-radius: 6px;
+  background: #162435;
+  color: #e0e6ed;
+  font-size: 12px;
+  resize: vertical;
+  font-family: inherit;
+  min-height: 60px;
+}
+
+#query-input:focus {
+  outline: none;
+  border-color: #4cc9f0;
+}
+
+#analyze-btn {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #4cc9f0;
+  color: #0f1923;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#analyze-btn:hover {
+  background: #3ab8df;
+}
+
+#analyze-btn:disabled {
+  background: #2a3a4a;
+  color: #6b7b8d;
+  cursor: not-allowed;
+}
+
+#examples {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.example {
+  padding: 3px 8px;
+  background: #162435;
+  border: 1px solid #1e2d3d;
+  border-radius: 12px;
+  font-size: 10px;
+  color: #6b9bc0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.example:hover {
+  border-color: #4cc9f0;
+  color: #4cc9f0;
+}
+
+/* ---- Sections ---- */
+section {
+  margin-bottom: 12px;
+}
+
+section h2 {
+  font-size: 13px;
+  color: #4cc9f0;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #1e2d3d;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---- Trace Cards ---- */
+.trace-card {
+  background: #162435;
+  border: 1px solid #1e2d3d;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.trace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.trace-step {
+  font-size: 11px;
+  color: #6b7b8d;
+  font-weight: 600;
+}
+
+.trace-type {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.type-user_query   { background: #1a3a5c; color: #4cc9f0; }
+.type-llm_decision { background: #3a2a1a; color: #ffa726; }
+.type-tool_result  { background: #1a3a2a; color: #66bb6a; }
+.type-final_answer { background: #2a1a3a; color: #ab47bc; }
+.type-error        { background: #3a1a1a; color: #ef5350; }
+
+.trace-body {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #c0cad5;
+  word-break: break-word;
+}
+
+.trace-tool {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #6b9bc0;
+}
+
+.trace-details {
+  margin-top: 4px;
+}
+
+.trace-details summary {
+  font-size: 10px;
+  color: #6b9bc0;
+  cursor: pointer;
+}
+
+.trace-details pre {
+  margin-top: 4px;
+  padding: 6px;
+  background: #0f1923;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #8899aa;
+  overflow-x: auto;
+  max-height: 100px;
+  white-space: pre-wrap;
+}
+
+/* ---- Chart ---- */
+#chart-canvas {
+  width: 100%;
+  height: 280px;
+  border-radius: 6px;
+  border: 1px solid #1e2d3d;
+}
+
+/* ---- Summary ---- */
+#summary-container {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #c0cad5;
+  background: #162435;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #1e2d3d;
+  white-space: pre-wrap;
+}
+
+/* ---- Error ---- */
+#error-container {
+  background: #2a1a1a;
+  border: 1px solid #ef5350;
+  color: #ef5350;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* ---- Loading ---- */
+#loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  color: #6b7b8d;
+  font-size: 12px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #1e2d3d;
+  border-top-color: #4cc9f0;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Agent</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Market Agent</h1>
+      <p class="subtitle">Agentic AI Market Analysis</p>
+    </header>
+
+    <section id="query-section">
+      <textarea
+        id="query-input"
+        rows="3"
+        placeholder="e.g. Fetch 1-minute candles for NIFTY and draw Fibonacci levels"
+      ></textarea>
+      <button id="analyze-btn">Analyze</button>
+      <div id="examples">
+        <span
+          class="example"
+          data-query="Fetch 1-minute candles for NIFTY, detect swing points, and calculate Fibonacci retracement levels"
+        >NIFTY Fibonacci</span>
+        <span
+          class="example"
+          data-query="Analyze 5-minute candles for RELIANCE, find swing high/low, and show Fibonacci levels on a chart"
+        >RELIANCE Analysis</span>
+        <span
+          class="example"
+          data-query="Get 1-minute candle data for BANKNIFTY, calculate derived markers and visualize them"
+        >BANKNIFTY Markers</span>
+      </div>
+    </section>
+
+    <section id="trace-section" class="hidden">
+      <h2>Agent Trace</h2>
+      <div id="trace-container"></div>
+    </section>
+
+    <section id="chart-section" class="hidden">
+      <h2>Chart</h2>
+      <canvas id="chart-canvas"></canvas>
+    </section>
+
+    <section id="summary-section" class="hidden">
+      <h2>Summary</h2>
+      <div id="summary-container"></div>
+    </section>
+
+    <div id="error-container" class="hidden"></div>
+
+    <div id="loading" class="hidden">
+      <div class="spinner"></div>
+      <span>Agent is analyzing...</span>
+    </div>
+  </div>
+
+  <script src="chart.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
